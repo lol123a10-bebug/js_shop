@@ -1,0 +1,23 @@
+mixin product-item(product, isAdmin = false)
+  article.card.product-item
+    header.card__header
+      h1.product__title= product.title
+
+    .card__image
+      img(src=product.imageUrl, alt=product.title)
+
+    .card__content
+      h2.product__price= "$ " + product.price
+      p.product__description= product.description
+
+      if (isAdmin)
+        .card__actions
+          a.btn(href=`/admin/edit-product/${product._id}?edit=true`) Edit
+
+          form(action="/admin/delete-product", method="post")
+            input(type="hidden", name="productId", value=product._id)
+            button.btn(type="submit") Delete
+      else
+        .card__actions
+          a.btn(href="/products/" + product._id) Details
+          include ../shared/add-to-cart.pug
