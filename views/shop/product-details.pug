@@ -9,4 +9,5 @@ block content
     h2 $#{ product.price }
     p #{ product.description }
 
-    include ../shared/add-to-cart.pug
+    if isAuthenticated
+      include ../shared/add-to-cart.pug

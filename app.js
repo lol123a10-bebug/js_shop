@@ -4,14 +4,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 
 const User = require('./models/user');
 
-const userId = '640f739f2dd07e39c9c0646c';
+const USER_ID = '640f739f2dd07e39c9c0646c';
+const MONGODB_URI =
+  'mongodb+srv://soulbuster321:ghjcnj123a@node-js.izbqgum.mongodb.net/shop?retryWrites=true&w=majority';
 
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions',
+});
 
 app.set('view engine', 'pug');
 app.set('views', 'views');
@@ -27,17 +34,32 @@ app.use(
     secret: 'my very scecret value uauaua',
     resave: false,
     saveUninitialized: false,
+    store,
   })
 );
 
-app.use((req, res, next) => {
-  User.findById(userId)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch(console.error);
+app.use(async (req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error(err);
+  }
 });
+
+// app.use((req, res, next) => {
+//   User.findById(USER_ID)
+//     .then((user) => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch(console.error);
+// });
 
 app.use('/admin', adminRoutes);
 
@@ -47,7 +69,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect('mongodb+srv://soulbuster321:ghjcnj123a@node-js.izbqgum.mongodb.net/shop?retryWrites=true&w=majority')
+  .connect(MONGODB_URI)
   .then(() => {
     User.findOne().then((user) => {
       if (!user) {
@@ -58,7 +80,7 @@ mongoose
             items: [],
           },
 
-          orders: { items: [], userId: userId },
+          orders: { items: [], userId: USER_ID },
         });
         user.save();
       }

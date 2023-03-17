@@ -20,4 +20,5 @@ mixin product-item(product, isAdmin = false)
       else
         .card__actions
           a.btn(href="/products/" + product._id) Details
-          include ../shared/add-to-cart.pug
+          if isAuthenticated
+            include ../shared/add-to-cart.pug
