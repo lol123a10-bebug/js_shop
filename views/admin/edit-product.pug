@@ -7,6 +7,8 @@ block styles
 block content
   main
     form.product-form(action=`/admin/${editing ? 'edit' : 'add'}-product`, method="POST")
+      input(name="_csrf", type="hidden", value=csrfToken)
+
       .form-control
         label(for="title") Title
         input#title(type="text", name="title", value=editing ? product.title : "")

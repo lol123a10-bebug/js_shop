@@ -8,7 +8,8 @@ const getProducts = (path) => (req, res) => {
         products,
         pageTitle: 'Shop',
         path,
-        isAuthenticated: req.session.isLoggdenIn,
+
+        csrfToken: req.csrfToken(),
       });
     })
     .catch(console.log);
@@ -29,7 +30,6 @@ exports.getProduct = (req, res) => {
         pageTitle: product.title,
         product,
         path: '/products',
-        isAuthenticated: req.session.isLoggdenIn,
       });
     })
     .catch(console.log);
@@ -59,7 +59,6 @@ exports.getCart = (req, res) => {
         pageTitle: 'Your cart',
         path: '/cart',
         products: products,
-        isAuthenticated: req.session.isLoggdenIn,
       });
     })
     .catch(console.error);
@@ -87,7 +86,7 @@ exports.postOrder = async (req, res) => {
 
     const order = new Order({
       user: {
-        name: req.user.name,
+        email: req.user.email,
         userId: req.user,
       },
 
@@ -111,7 +110,6 @@ exports.getOrders = (req, res) => {
         pageTitle: 'Your orders',
         path: '/orders',
         orders,
-        isAuthenticated: req.session.isLoggdenIn,
       });
     })
     .catch(console.error);

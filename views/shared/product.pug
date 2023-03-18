@@ -15,6 +15,7 @@ mixin product-item(product, isAdmin = false)
           a.btn(href=`/admin/edit-product/${product._id}?edit=true`) Edit
 
           form(action="/admin/delete-product", method="post")
+            input(name="_csrf", type="hidden", value=csrfToken)
             input(type="hidden", name="productId", value=product._id)
             button.btn(type="submit") Delete
       else
