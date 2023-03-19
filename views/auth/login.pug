@@ -6,6 +6,9 @@ block styles
 
 block content
   main
+    if (errorMessage)
+      .user-message.user-message--error #{ errorMessage }
+
     form.login-form(action="/login", method="POST")
       input(name="_csrf", type="hidden", value=csrfToken)
 
