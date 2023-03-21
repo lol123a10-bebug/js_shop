@@ -23,7 +23,10 @@ exports.postLogin = async (req, res) => {
 
   const doMatch = await bcrypt.compare(password, user.password);
 
-  if (!doMatch) return res.redirect('/login');
+  if (!doMatch) {
+    req.flash('error', 'Invalid email or password.');
+    return res.redirect('/login');
+  }
 
   req.session.isLoggedIn = true;
   req.session.user = user;
@@ -35,9 +38,12 @@ exports.postLogin = async (req, res) => {
 };
 
 exports.getSignup = async (req, res) => {
+  const [message] = req.flash('error');
+
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
+    errorMessage: message,
   });
 };
 
@@ -46,7 +52,10 @@ exports.postSignup = async (req, res) => {
 
   const userDoc = await User.findOne({ email });
 
-  if (userDoc) return res.redirect('/signup');
+  if (userDoc) {
+    req.flash('error', 'Email already exists, please pick another one.');
+    return res.redirect('/signup');
+  }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
