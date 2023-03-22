@@ -7,21 +7,21 @@ block styles
 block content
   main
     if (errorMessage)
-      .user-message.user-message--error #{ errorMessage }
+      .user-message.user-message--error= errorMessage
 
-    form.login-form(action="/signup", method="POST")
+    form.login-form(action="/signup", method="POST", novalidate)
       input(name="_csrf", type="hidden", value=csrfToken)
 
       .form-control
         label(for="email") Email
-        input#email(type="text", name="email")
+        input#email(type="text", name="email", value=oldInput.email)
 
       .form-control
         label(for="password") Password
-        input#password(type="text", name="password")
+        input#password(type="text", name="password", value=oldInput.password)
 
       .form-control
         label(for="confirmPassword") Confirm Password
-        input#confirmPassword(type="text", name="confirmPassword")
+        input#confirmPassword(type="text", name="confirmPassword", value=oldInput.confirmPassword)
 
       button.btn(type="submit") Signup
