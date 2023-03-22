@@ -9,18 +9,11 @@ block content
     if (errorMessage)
       .user-message.user-message--error #{ errorMessage }
 
-    form.login-form(action="/login", method="POST")
+    form.login-form(action="/reset", method="POST")
       input(name="_csrf", type="hidden", value=csrfToken)
 
       .form-control
         label(for="email") Email
         input#email(type="text", name="email")
 
-      .form-control
-        label(for="password") Password
-        input#password(type="text", name="password")
-
-      button.btn(type="submit") Login
-
-    .centered
-      a(href="/reset") Reset Password
+      button.btn(type="submit") Reset Password
