@@ -22,6 +22,7 @@
     "connect-mongodb-session": "^3.1.1",
     "csrf": "^3.1.0",
     "csurf": "^1.11.0",
+    "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "express": "^4.18.2",
     "express-handlebars": "^7.0.2",
@@ -29,6 +30,8 @@
     "mongodb": "^5.1.0",
     "mongoose": "^7.0.1",
     "mysql2": "^3.2.0",
+    "nodemailer": "^6.9.1",
+    "nodemailer-mailjet-transport": "^1.0.4",
     "pug": "^3.0.2",
     "sequelize": "^6.29.3"
   }

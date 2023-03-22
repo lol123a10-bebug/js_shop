@@ -1,6 +1,17 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const mailjetTransport = require('nodemailer-mailjet-transport');
 
 const User = require('../models/user');
+
+const transport = nodemailer.createTransport(
+  mailjetTransport({
+    auth: {
+      apiKey: process.env.maject_api_key,
+      apiSecret: process.env.maject_api_secret,
+    },
+  })
+);
 
 exports.getLogin = (req, res, next) => {
   const [message] = req.flash('error');
