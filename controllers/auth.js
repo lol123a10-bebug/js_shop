@@ -21,6 +21,8 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     pageTitle: 'Login',
     errorMessage: message,
+    validationErrors: [],
+    oldInput: {},
   });
 };
 
@@ -36,6 +38,8 @@ exports.postLogin = async (req, res) => {
       path: '/login',
       pageTitle: 'Login',
       errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
+      oldInput: { email, password },
     });
   }
 
@@ -56,6 +60,7 @@ exports.getSignup = async (req, res) => {
     pageTitle: 'Signup',
     errorMessage: message,
     oldInput: {},
+    validationErrors: [],
   });
 };
 
@@ -74,6 +79,8 @@ exports.postSignup = async (req, res) => {
         password,
         confirmPassword,
       },
+
+      validationErrors: errors.array(),
     });
   }
 

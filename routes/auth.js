@@ -26,6 +26,7 @@ router.post(
   [
     body('email', 'Enter correct email.')
       .isEmail()
+      .normalizeEmail()
       .custom(async (email) => {
         const user = await User.findOne({ email });
 
@@ -33,17 +34,19 @@ router.post(
 
         return true;
       }),
-    body('password').custom(async (password, { req }) => {
-      const user = await User.findOne({ email: req.body.email });
+    body('password')
+      .custom(async (password, { req }) => {
+        const user = await User.findOne({ email: req.body.email });
 
-      const doMatch = await bcrypt.compare(password, user.password);
+        const doMatch = await bcrypt.compare(password, user.password);
 
-      if (!doMatch) {
-        throw new Error('Incorrect password.');
-      }
+        if (!doMatch) {
+          throw new Error('Incorrect password.');
+        }
 
-      return true;
-    }),
+        return true;
+      })
+      .trim(),
   ],
   postLogin
 );
@@ -71,19 +74,23 @@ router.post(
         }
 
         return true;
-      }),
+      })
+      .normalizeEmail(),
 
     body('password', 'Please enter a password with only numbers and text at least 4 characters.')
       .isLength({ min: 4 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
 
-    body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords have to match.');
-      }
+    body('confirmPassword')
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error('Passwords have to match.');
+        }
 
-      return true;
-    }),
+        return true;
+      }),
   ],
 
   postSignup

@@ -14,11 +14,21 @@ block content
 
       .form-control
         label(for="email") Email
-        input#email(type="text", name="email")
+        input#email(
+          class=validationErrors.find((error) => error.param === "email") ? "invalid" : "",
+          type="text",
+          name="email",
+          value=oldInput.email
+        )
 
       .form-control
         label(for="password") Password
-        input#password(type="text", name="password")
+        input#password(
+          class=validationErrors.find((error) => error.param === "password") ? "invalid" : "",
+          type="text",
+          name="password",
+          value=oldInput.password
+        )
 
       button.btn(type="submit") Login
 
