@@ -6,24 +6,27 @@ block styles
 
 block content
   main
+    if (errorMessage)
+      .user-message.user-message--error #{ errorMessage }
+
     form.product-form(action=`/admin/${editing ? 'edit' : 'add'}-product`, method="POST")
       input(name="_csrf", type="hidden", value=csrfToken)
 
       .form-control
         label(for="title") Title
-        input#title(type="text", name="title", value=editing ? product.title : "")
+        input#title(type="text", name="title", value=editing || hasError ? product.title : "")
 
       .form-control
         label(for="imageUrl") Image URL
-        input#imageUrl(type="text", name="imageUrl", value=editing ? product.imageUrl : "") 
+        input#imageUrl(type="text", name="imageUrl", value=editing || hasError ? product.imageUrl : "") 
 
       .form-control
         label(for="price") Price
-        input#price(type="number", name="price", step="0.01", value=editing ? product.price : "") 
+        input#price(type="number", name="price", step="0.01", value=editing || hasError ? product.price : "") 
 
       .form-control
         label(for="description") Description
-        textarea#description(type="text", name="description", rows="5") #{ editing ? product.description : "" }
+        textarea#description(type="text", name="description", rows="5") #{ editing || hasError  ? product.description : "" }
 
       if editing
         input(type="hidden", name="productId", value=product._id)
