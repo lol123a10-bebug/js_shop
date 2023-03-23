@@ -5,6 +5,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add product',
     path: '/admin/add-product',
+    validationErrors: [],
   });
 };
 
@@ -26,6 +27,7 @@ exports.postAddProduct = (req, res, next) => {
       },
       hasError: true,
       errorMessage: errors.array().at(0).msg,
+      validationErrors: errors.array(),
     });
   }
 
@@ -69,6 +71,7 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode,
         product,
+        validationErrors: [],
       });
     })
     .catch(console.error);
@@ -76,6 +79,26 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, price, description, imageUrl } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Edit product',
+      path: '/admin/add-product',
+      editing: true,
+      product: {
+        _id: productId,
+        title,
+        imageUrl,
+        price,
+        description,
+      },
+      hasError: true,
+      errorMessage: errors.array().at(0).msg,
+      validationErrors: errors.array(),
+    });
+  }
 
   Product.findById(productId)
     .then((product) => {

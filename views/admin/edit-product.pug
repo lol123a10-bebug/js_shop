@@ -14,19 +14,40 @@ block content
 
       .form-control
         label(for="title") Title
-        input#title(type="text", name="title", value=editing || hasError ? product.title : "")
+        input#title(
+          class=validationErrors.find((error) => error.param === "title") ? "invalid" : "",
+          type="text",
+          name="title",
+          value=editing || hasError ? product.title : ""
+        )
 
       .form-control
         label(for="imageUrl") Image URL
-        input#imageUrl(type="text", name="imageUrl", value=editing || hasError ? product.imageUrl : "") 
+        input#imageUrl(
+          class=validationErrors.find((error) => error.param === "imageUrl") ? "invalid" : "",
+          type="text",
+          name="imageUrl",
+          value=editing || hasError ? product.imageUrl : ""
+        ) 
 
       .form-control
         label(for="price") Price
-        input#price(type="number", name="price", step="0.01", value=editing || hasError ? product.price : "") 
+        input#price(
+          class=validationErrors.find((error) => error.param === "price") ? "invalid" : "",
+          type="number",
+          name="price",
+          step="0.01",
+          value=editing || hasError ? product.price : ""
+        ) 
 
       .form-control
         label(for="description") Description
-        textarea#description(type="text", name="description", rows="5") #{ editing || hasError  ? product.description : "" }
+        textarea#description(
+          class=validationErrors.find((error) => error.param === "description") ? "invalid" : "",
+          type="text",
+          name="description",
+          rows="5"
+        ) #{ editing || hasError  ? product.description : "" }
 
       if editing
         input(type="hidden", name="productId", value=product._id)
