@@ -12,6 +12,7 @@ block content
             h1 # #{ order._id }
             ul.orders__product
               each product in order.products
-                li.orders__products-item #{ product.product.title } (#{ product.quantity })
+                li.orders__products-item #{ product.product.title } (#{ product.quantity })#{ ' - ' }
+                  a(href=`/orders/${order._id}`) Invoice
     else
       h1 Nothing here!
