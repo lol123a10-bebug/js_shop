@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Product = require('../models/product');
+const { deleteFile } = require('../utils/file');
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -116,6 +117,10 @@ exports.postEditProduct = (req, res, next) => {
       if (!product) return;
 
       if (product.userId.toString() !== req.user._id.toString()) return;
+
+      if (imageUrl) {
+        deleteFile(product.imageUrl);
+      }
 
       product.set({ title, price, description, imageUrl });
       return product.save();
