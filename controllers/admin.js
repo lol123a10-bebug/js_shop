@@ -10,7 +10,24 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
+  const image = req.file;
+
+  if (!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add product',
+      path: '/admin/add-product',
+      editing: false,
+      product: {
+        title,
+        price,
+        description,
+      },
+      hasError: true,
+      errorMessage: 'Attached file is not an image.',
+      validationErrors: [],
+    });
+  }
 
   const errors = validationResult(req);
 
@@ -21,7 +38,6 @@ exports.postAddProduct = (req, res, next) => {
       editing: false,
       product: {
         title,
-        imageUrl,
         price,
         description,
       },
@@ -31,13 +47,15 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
+  const imageUrl = image.path;
+
   const product = new Product({
     // _id: new Types.ObjectId('640f747fb7662e393996cdfd'),
     title,
     price,
     description,
-    imageUrl,
     userId: req.user,
+    imageUrl,
   });
 
   product
@@ -89,7 +107,8 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const { productId, title, price, description, imageUrl } = req.body;
+  const { productId, title, price, description } = req.body;
+  const image = req.file;
 
   const errors = validationResult(req);
 
@@ -101,7 +120,6 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         _id: productId,
         title,
-        imageUrl,
         price,
         description,
       },
@@ -117,7 +135,7 @@ exports.postEditProduct = (req, res, next) => {
 
       if (product.userId.toString() !== req.user._id.toString()) return;
 
-      product.set({ title, price, description, imageUrl });
+      product.set({ title, price, description, imageUrl: image?.path });
       return product.save();
     })
     .then(() => {

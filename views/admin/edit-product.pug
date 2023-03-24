@@ -9,7 +9,11 @@ block content
     if (errorMessage)
       .user-message.user-message--error #{ errorMessage }
 
-    form.product-form(action=`/admin/${editing ? 'edit' : 'add'}-product`, method="POST")
+    form.product-form(
+      action=`/admin/${editing ? 'edit' : 'add'}-product`,
+      method="POST",
+      enctype="multipart/form-data"
+    )
       input(name="_csrf", type="hidden", value=csrfToken)
 
       .form-control
@@ -21,14 +25,18 @@ block content
           value=editing || hasError ? product.title : ""
         )
 
+      //- .form-control
+      //-   label(for="imageUrl") Image URL
+      //-   input#imageUrl(
+      //-     class=validationErrors.find((error) => error.param === "imageUrl") ? "invalid" : "",
+      //-     type="text",
+      //-     name="imageUrl",
+      //-     value=editing || hasError ? product.imageUrl : ""
+      //-   ) 
+
       .form-control
-        label(for="imageUrl") Image URL
-        input#imageUrl(
-          class=validationErrors.find((error) => error.param === "imageUrl") ? "invalid" : "",
-          type="text",
-          name="imageUrl",
-          value=editing || hasError ? product.imageUrl : ""
-        ) 
+        label(for="image") Image
+        input#image(type="file", name="image")
 
       .form-control
         label(for="price") Price
