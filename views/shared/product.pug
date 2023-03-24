@@ -4,7 +4,7 @@ mixin product-item(product, isAdmin = false)
       h1.product__title= product.title
 
     .card__image
-      img(src=product.imageUrl, alt=product.title)
+      img(src=`/${product.imageUrl}`, alt=product.title)
 
     .card__content
       h2.product__price= "$ " + product.price
