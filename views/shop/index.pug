@@ -9,6 +9,9 @@ block content
     if products.length > 0
       .grid
         each product in products
-          +product-item(product)
+          +product-item(product, isAuthenicated)
+
+      include ../shared/pagination.pug
+
     else
       h1 No Products

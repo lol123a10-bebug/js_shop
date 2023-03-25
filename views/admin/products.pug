@@ -9,6 +9,6 @@ block content
     if products.length > 0
       .grid
         each product in products
-          +product-item(product, true)
+          +product-item(product, isAuthenicated)
     else
       h1 No Products
