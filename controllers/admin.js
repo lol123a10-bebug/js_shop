@@ -136,6 +136,10 @@ exports.postEditProduct = (req, res, next) => {
 
       if (product.userId.toString() !== req.user._id.toString()) return;
 
+      if (image) {
+        deleteFile(product.imageUrl);
+      }
+
       product.set({ title, price, description, imageUrl: image?.path });
       return product.save();
     })
@@ -145,12 +149,19 @@ exports.postEditProduct = (req, res, next) => {
     .catch(console.error);
 };
 
-exports.postDeleteProduct = (req, res) => {
+exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.deleteOne({ _id: productId, userId: req.user._id })
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) return next(new Error('Product not found.'));
+
+      deleteFile(product.imageUrl);
+
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
     .then(() => {
       res.redirect('/admin/products');
     })
-    .catch(console.error);
+    .catch(next);
 };

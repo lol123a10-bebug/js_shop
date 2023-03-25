@@ -3,7 +3,7 @@ mixin product-item(product, isAdmin = false)
     header.card__header
       h1.product__title= product.title
 
-    .card__image
+    .card__image.product__image
       img(src=`/${product.imageUrl}`, alt=product.title)
 
     .card__content
