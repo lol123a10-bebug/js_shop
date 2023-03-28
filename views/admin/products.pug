@@ -3,12 +3,30 @@ include ../shared/product.pug
 
 block styles
   link(rel="stylesheet", href="/css/product.css")
+  script(src="/js/admin.js", defer) 
 
 block content
   main
     if products.length > 0
       .grid
         each product in products
-          +product-item(product, isAuthenicated)
+          article.card.product-item
+            header.card__header
+              h1.product__title= product.title
+
+            .card__image.product__image
+              img(src=`/${product.imageUrl}`, alt=product.title)
+
+            .card__content
+              h2.product__price= "$ " + product.price
+              p.product__description= product.description
+
+              .card__actions
+                a.btn(href=`/admin/edit-product/${product._id}?edit=true`) Edit
+
+                input(name="_csrf", type="hidden", value=csrfToken) 
+                input(type="hidden", name="productId", value=product._id)
+                button.btn(type="button", onclick="deleteProduct(this)") Delete
+
     else
       h1 No Products

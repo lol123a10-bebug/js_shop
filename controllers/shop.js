@@ -92,6 +92,27 @@ exports.postCartDeleteProduct = (req, res) => {
     .catch(console.log);
 };
 
+exports.getCheckout = (req, res, next) => {
+  req.user
+    .populate('cart.items.productId')
+    .then((user) => {
+      const products = user.cart.items;
+
+      let total = 0;
+
+      products.forEach((product) => {
+        total += product.quantity * product.productId.price;
+      });
+
+      res.render('shop/checkout', {
+        pageTitle: 'Checkout',
+        products,
+        totalSum: total,
+      });
+    })
+    .catch(console.error);
+};
+
 exports.postOrder = async (req, res) => {
   try {
     const user = await req.user.populate('cart.items.productId');
