@@ -12,3 +12,16 @@ block content
           h2 Quantity: #{ product.quantity }
     .centered
       h2 Total: $#{ totalSum }
+
+    .centered
+      button#order-btn.btn Order
+      script(src="https://js.stripe.com/v3") 
+      script.
+        const stripe = Stripe("!{process.env.stripe_key}");
+        const orderBtn = document.getElementById("order-btn");
+
+        orderBtn.addEventListener("click", () => {
+          stripe.redirectToCheckout({
+            sessionId: "!{sessionId}",
+          });
+        });

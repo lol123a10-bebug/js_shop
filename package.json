@@ -36,6 +36,7 @@
     "nodemailer-mailjet-transport": "^1.0.4",
     "pdfkit": "^0.13.0",
     "pug": "^3.0.2",
-    "sequelize": "^6.29.3"
+    "sequelize": "^6.29.3",
+    "stripe": "^7.11.0"
   }
 }

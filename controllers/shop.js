@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const stripe = require('stripe')(process.env.stripe_secret);
 
 const PDFDocument = require('pdfkit');
 
@@ -92,25 +93,80 @@ exports.postCartDeleteProduct = (req, res) => {
     .catch(console.log);
 };
 
-exports.getCheckout = (req, res, next) => {
-  req.user
-    .populate('cart.items.productId')
-    .then((user) => {
-      const products = user.cart.items;
+exports.getCheckout = async (req, res, next) => {
+  try {
+    const user = await req.user.populate('cart.items.productId');
 
-      let total = 0;
+    const products = user.cart.items;
 
-      products.forEach((product) => {
-        total += product.quantity * product.productId.price;
-      });
+    let total = 0;
 
-      res.render('shop/checkout', {
-        pageTitle: 'Checkout',
-        products,
-        totalSum: total,
-      });
-    })
-    .catch(console.error);
+    products.forEach((product) => {
+      total += product.quantity * product.productId.price;
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: products.map((product) => {
+        const { title, description, price } = product.productId;
+
+        return {
+          price_data: {
+            unit_amount: price * 100,
+            currency: 'usd',
+
+            product_data: {
+              name: title,
+              description,
+            },
+          },
+          quantity: product.quantity,
+        };
+      }),
+
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/checkout/success`,
+      cancel_url: `${req.protocol}://${req.get('host')}/checkout/cancel`,
+    });
+
+    res.render('shop/checkout', {
+      stripeKey: process.env.stripe_key,
+      pageTitle: 'Checkout',
+      products,
+      totalSum: total,
+      sessionId: session.id,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCheckoutSuccess = async (req, res) => {
+  try {
+    const user = await req.user.populate('cart.items.productId');
+
+    const products = user.cart.items.map((item) => ({
+      product: { ...item.productId._doc },
+      quantity: item.quantity,
+    }));
+
+    const order = new Order({
+      user: {
+        email: req.user.email,
+        userId: req.user,
+      },
+
+      products,
+    });
+
+    await order.save();
+
+    await user.clearCart();
+
+    res.redirect('/orders');
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.postOrder = async (req, res) => {
@@ -200,5 +256,8 @@ exports.getInvoice = (req, res, next) => {
 
       // file.pipe(res);
     })
-    .catch(next);
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };
